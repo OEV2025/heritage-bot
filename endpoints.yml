@@ -1,2 +1,8 @@
 action_endpoint:
   url: "http://localhost:5055/webhook"
+
+cors:
+  enabled: true
+  origins:
+    - "https://oev2025.github.io/heritage-bot/"
+

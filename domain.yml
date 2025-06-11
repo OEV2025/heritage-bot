@@ -1,0 +1,33 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - what_is_heritage
+  - what_is_unesco
+  - why_is_heritage_important
+  - how_to_preserve_heritage
+  - threats_to_heritage
+  - examples_of_world_heritage
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm here to help you learn about cultural heritage."
+  utter_goodbye:
+    - text: "Goodbye! Take care and preserve the past."
+  utter_what_is_heritage:
+    - text: "Cultural heritage includes monuments, traditions, and values passed down through generations."
+  utter_what_is_unesco:
+    - text: "UNESCO is a UN agency that promotes education, science, and culture, including World Heritage preservation."
+  utter_why_is_heritage_important:
+    - text: "Heritage connects us to our history, identity, and helps preserve our collective memory."
+  utter_how_to_preserve_heritage:
+    - text: "Preserving heritage involves education, conservation, restoration, and community involvement."
+  utter_threats_to_heritage:
+    - text: "Common threats include war, climate change, neglect, and urban development."
+  utter_examples_of_world_heritage:
+    - text: "Examples include the Pyramids of Egypt, Great Wall of China, and Machu Picchu in Peru."
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

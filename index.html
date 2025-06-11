@@ -1,21 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <title>Heritage Assistant</title>
-  <script src="https://cdn.jsdelivr.net/npm/@rasahq/rasa-webchat/lib/index.min.js"></script>
+<meta charset="UTF-8" />
+<title>Chat Heritage Bot</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
+  #chat { border: 1px solid #ccc; padding: 1rem; height: 400px; overflow-y: auto; }
+  .message { margin: 0.5rem 0; }
+  .user { color: blue; }
+  .bot { color: green; }
+  #inputArea { margin-top: 1rem; }
+</style>
 </head>
 <body>
-  <h2>Welcome to the Heritage Assistant</h2>
-  <div id="webchat"></div>
-  <script>
-    WebChat.default.init({
-      selector: "#webchat",
-      initPayload: "/greet",
-      customData: { language: "en" },
-      socketUrl: "http://localhost:5005",
-      title: "Heritage Bot",
-      subtitle: "Ask me anything about cultural heritage!"
-    });
-  </script>
+
+<h2>Heritage Bot Chat</h2>
+<div id="chat"></div>
+
+<div id="inputArea">
+  <input type="text" id="userInput" placeholder="Scrie mesajul..." style="width:80%" />
+  <button id="sendBtn">Trimite</button>
+</div>
+
+<script>
+  const chat = document.getElementById('chat');
+  const input = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  const rasaEndpoint = 'https://heritage-bot-2-r55q.onrender.com/webhooks/rest/webhook';
+
+  function appendMessage(text, sender) {
+    const div = document.createElement('div');
+    div.classList.add('message', sender);
+    div.textContent = (sender === 'user' ? 'Tu: ' : 'Bot: ') + text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage(message, 'user');
+    input.value = '';
+    
+    try {
+      const response = await fetch(rasaEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sender: 'user1', message })
+      });
+
+      if (!response.ok) {
+        appendMessage('Eroare la comunicarea cu botul.', 'bot');
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.length === 0) {
+        appendMessage('Botul nu a răspuns.', 'bot');
+      } else {
+        data.forEach(msg => {
+          if (msg.text) appendMessage(msg.text, 'bot');
+        });
+      }
+    } catch (error) {
+      appendMessage('Eroare de rețea sau server.', 'bot');
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+</script>
+
 </body>
 </html>
+

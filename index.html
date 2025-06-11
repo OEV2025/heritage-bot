@@ -1,1 +1,82 @@
-<
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Heritage Bot Chat</title>
+  <style>
+    #chatbox {
+      height: 300px;
+      border: 1px solid #ccc;
+      overflow-y: auto;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+    }
+    #chatbox div {
+      margin-bottom: 10px;
+    }
+    .user-msg {
+      color: blue;
+    }
+    .bot-msg {
+      color: green;
+    }
+    #userInput {
+      width: 80%;
+      padding: 8px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Heritage Bot Chat</h2>
+  <div id="chatbox"></div>
+  <input type="text" id="userInput" placeholder="Scrie mesajul..." />
+  <button onclick="sendMessage()">Trimite</button>
+
+  <script>
+    const rasaEndpoint = 'http://localhost:5005/webhooks/rest/webhook';
+
+    function appendMessage(sender, message) {
+      const chatbox = document.getElementById('chatbox');
+      const msgDiv = document.createElement('div');
+      msgDiv.textContent = sender + ': ' + message;
+      msgDiv.className = sender === 'Tu' ? 'user-msg' : 'bot-msg';
+      chatbox.appendChild(msgDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage('Tu', message);
+      input.value = '';
+
+      try {
+        const response = await fetch(rasaEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender: "user", message: message }),
+        });
+        const data = await response.json();
+
+        if (!data.length) {
+          appendMessage('Bot', 'Botul nu a răspuns.');
+        } else {
+          data.forEach(resp => {
+            appendMessage('Bot', resp.text || '...');
+          });
+        }
+      } catch (error) {
+        appendMessage('Bot', 'Eroare la comunicarea cu serverul.');
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>

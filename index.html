@@ -37,46 +37,4 @@
   <input type="text" id="userInput" placeholder="Scrie mesajul..." />
   <button onclick="sendMessage()">Trimite</button>
 
-  <script>
-    const rasaEndpoint = 'http://localhost:5005/webhooks/rest/webhook';
-
-    function appendMessage(sender, message) {
-      const chatbox = document.getElementById('chatbox');
-      const msgDiv = document.createElement('div');
-      msgDiv.textContent = sender + ': ' + message;
-      msgDiv.className = sender === 'Tu' ? 'user-msg' : 'bot-msg';
-      chatbox.appendChild(msgDiv);
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
-
-    async function sendMessage() {
-      const input = document.getElementById('userInput');
-      const message = input.value.trim();
-      if (!message) return;
-
-      appendMessage('Tu', message);
-      input.value = '';
-
-      try {
-        const response = await fetch(rasaEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sender: "user", message: message }),
-        });
-        const data = await response.json();
-
-        if (!data.length) {
-          appendMessage('Bot', 'Botul nu a răspuns.');
-        } else {
-          data.forEach(resp => {
-            appendMessage('Bot', resp.text || '...');
-          });
-        }
-      } catch (error) {
-        appendMessage('Bot', 'Eroare la comunicarea cu serverul.');
-        console.error(error);
-      }
-    }
-  </script>
-</body>
-</html>
+  <scri
